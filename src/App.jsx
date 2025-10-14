@@ -6,6 +6,7 @@ import Contact from './components/pages/Contact.jsx';
 import ProductDetails from './components/pages/ProductDetails.jsx';
 import Login from './components/pages/Login.jsx';
 import Welcome from './components/pages/Welcome.jsx';
+import CreateListing from './components/pages/CreateListing.jsx';
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/welcome" element={<Welcome />} />
+                <Route path="/CreateListing" element={<CreateListing />} />
                 {/*<Route path="/products" element={<ProductList />} />*/}
                 {/*<Route path="/products/:id" element={<ProductDetails />} />*/}
                 {/* You can add more routes here */}
