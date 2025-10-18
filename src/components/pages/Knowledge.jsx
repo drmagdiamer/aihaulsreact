@@ -162,7 +162,7 @@ export default function KnowledgeBuilderPage() {
         try {
             await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
             setMessage("📋 JSON copied to clipboard.");
-        } catch (e) {
+        } catch {
             setError("Could not copy to clipboard.");
         }
     }
