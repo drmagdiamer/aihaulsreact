@@ -1,0 +1,334 @@
+import React, { useMemo, useState } from "react";
+
+// --- Helpers (plain JS / JSX version) ---
+const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+const emptyFact = (id = "1") => ({ id, name: "", information: "" });
+const emptyElement = (id = "1") => ({ id, name: "", facts: [emptyFact("1")] });
+
+function nextNumericId(existing) {
+    const nums = existing
+        .map((s) => parseInt(s, 10))
+        .filter((n) => !Number.isNaN(n));
+    const max = nums.length ? Math.max(...nums) : 0;
+    return String(max + 1);
+}
+
+export default function KnowledgeBuilderPage() {
+    const [elements, setElements] = useState([emptyElement("5")]);
+    const [endpoint, setEndpoint] = useState("https://mySite/knowledge/build");
+    const [busy, setBusy] = useState(false);
+    const [message, setMessage] = useState(null);
+    const [error, setError] = useState(null);
+
+    const payload = useMemo(() => ({ data: elements }), [elements]);
+
+    function updateElement(idx, patch) {
+        setElements((prev) => prev.map((el, i) => (i === idx ? { ...el, ...patch } : el)));
+    }
+
+    function updateFact(elIdx, factIdx, patch) {
+        setElements((prev) =>
+            prev.map((el, i) => {
+                if (i !== elIdx) return el;
+                const facts = el.facts.map((f, j) => (j === factIdx ? { ...f, ...patch } : f));
+                return { ...el, facts };
+            })
+        );
+    }
+
+    function addElement() {
+        const nextId = nextNumericId(elements.map((e) => e.id));
+        setElements((prev) => [...prev, emptyElement(nextId)]);
+    }
+
+    function removeElement(idx) {
+        setElements((prev) => prev.filter((_, i) => i !== idx));
+    }
+
+    function addFact(elIdx) {
+        setElements((prev) =>
+            prev.map((el, i) => {
+                if (i !== elIdx) return el;
+                const nextId = nextNumericId(el.facts.map((f) => f.id));
+                return { ...el, facts: [...el.facts, emptyFact(nextId)] };
+            })
+        );
+    }
+
+    function removeFact(elIdx, factIdx) {
+        setElements((prev) =>
+            prev.map((el, i) => {
+                if (i !== elIdx) return el;
+                const facts = el.facts.filter((_, j) => j !== factIdx);
+                return { ...el, facts: facts.length ? facts : [emptyFact("1")] };
+            })
+        );
+    }
+
+    function loadDemo() {
+        const demo = {
+            data: [
+                {
+                    id: "5",
+                    name: "Doctor Information",
+                    facts: [
+                        { id: "1", name: "name", information: "Doctor's name is Tom Hanks" },
+                        {
+                            id: "2",
+                            name: "graduation",
+                            information: "The doctor has graduated from School of Medicine at Cairo University in 2000",
+                        },
+                        {
+                            id: "3",
+                            name: "name",
+                            information: "Doctor is an internal medicine physician, specialized in gastroenterology",
+                        },
+                    ],
+                },
+                {
+                    id: "6",
+                    name: "Office Location",
+                    facts: [
+                        { id: "1", name: "Location", information: "7652 Cashel Ct, Dublin, OH 43017" },
+                        { id: "2", name: "Longitude and Latitude", information: "40.123327, -83.147327" },
+                        { id: "3", name: "Parking", information: "Free parking is available in the street around the office" },
+                    ],
+                },
+                {
+                    id: "7",
+                    name: "Reservation Policy",
+                    facts: [
+                        { id: "1", name: "Walk in", information: "No walk ins. Meet only patients through reservation" },
+                        { id: "2", name: "Same Day Reservation", information: "Same day reservation may be available" },
+                        {
+                            id: "3",
+                            name: "Cancellation Policy",
+                            information: "You can cancel your appointment 24 hours in advance with no penalty",
+                        },
+                    ],
+                },
+            ],
+        };
+        setElements(deepClone(demo.data));
+    }
+
+    function validate(p) {
+        const errs = [];
+        if (!p.data.length) errs.push("Add at least one Knowledge Element.");
+        p.data.forEach((el, i) => {
+            if (!el.id?.trim()) errs.push(`Element #${i + 1}: id is required.`);
+            if (!el.name?.trim()) errs.push(`Element #${i + 1}: name is required.`);
+            if (!el.facts?.length) errs.push(`Element #${i + 1}: add at least one fact.`);
+            el.facts.forEach((f, j) => {
+                if (!f.id?.trim()) errs.push(`Element #${i + 1} · Fact #${j + 1}: id is required.`);
+                if (!f.name?.trim()) errs.push(`Element #${i + 1} · Fact #${j + 1}: name is required.`);
+                if (!f.information?.trim()) errs.push(`Element #${i + 1} · Fact #${j + 1}: information is required.`);
+            });
+        });
+        return errs;
+    }
+
+    async function send() {
+        setMessage(null);
+        setError(null);
+        const toSend = deepClone(payload);
+        const errs = validate(toSend);
+        if (errs.length) {
+            setError(errs.join("\n"));
+            return;
+        }
+
+        try {
+            setBusy(true);
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(toSend),
+            });
+            if (!res.ok) {
+                const text = await res.text().catch(() => "");
+                throw new Error(`HTTP ${res.status}${text ? ` — ${text}` : ""}`);
+            }
+            setMessage("✅ Sent successfully.");
+        } catch (e) {
+            setError(`Failed to send: ${e?.message ?? e}`);
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    async function copyJson() {
+        try {
+            await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+            setMessage("📋 JSON copied to clipboard.");
+        } catch {
+            setError("Could not copy to clipboard.");
+        }
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 text-gray-900 p-6">
+            <div className="max-w-6xl mx-auto">
+                <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold">Knowledge Builder</h1>
+                        <p className="text-sm text-gray-600">Create any number of Knowledge Elements, each with any number of Facts. Preview the JSON and POST it to your endpoint.</p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                        <input
+                            className="w-full sm:w-[420px] rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            value={endpoint}
+                            onChange={(e) => setEndpoint(e.target.value)}
+                            placeholder="https://mySite/knowledge/build"
+                        />
+                        <button
+                            onClick={loadDemo}
+                            className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm shadow hover:shadow-md"
+                            type="button"
+                        >
+                            Load Demo Data
+                        </button>
+                    </div>
+                </header>
+
+                {error && (
+                    <div className="mb-4 rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-800 whitespace-pre-line">
+                        {error}
+                    </div>
+                )}
+                {message && (
+                    <div className="mb-4 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800">
+                        {message}
+                    </div>
+                )}
+
+                {/* Elements List */}
+                <div className="flex flex-col gap-4">
+                    {elements.map((el, elIdx) => (
+                        <div key={elIdx} className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                            <div className="flex items-center justify-between border-b border-gray-100 p-4">
+                                <div className="font-semibold">Knowledge Element #{elIdx + 1}</div>
+                                <div className="flex gap-2">
+                                    <button
+                                        className="rounded-xl bg-gray-100 px-3 py-1.5 text-xs hover:bg-gray-200"
+                                        onClick={() => addFact(elIdx)}
+                                        type="button"
+                                    >
+                                        + Add Fact
+                                    </button>
+                                    <button
+                                        className="rounded-xl bg-red-50 px-3 py-1.5 text-xs text-red-700 hover:bg-red-100"
+                                        onClick={() => removeElement(elIdx)}
+                                        type="button"
+                                    >
+                                        Remove Element
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-3 p-4 sm:grid-cols-2">
+                                <label className="flex flex-col gap-1 text-sm">
+                                    <span className="text-gray-600">Element ID</span>
+                                    <input
+                                        className="rounded-xl border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        value={el.id}
+                                        onChange={(e) => updateElement(elIdx, { id: e.target.value })}
+                                    />
+                                </label>
+                                <label className="flex flex-col gap-1 text-sm">
+                                    <span className="text-gray-600">Element Name</span>
+                                    <input
+                                        className="rounded-xl border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        value={el.name}
+                                        onChange={(e) => updateElement(elIdx, { name: e.target.value })}
+                                    />
+                                </label>
+                            </div>
+
+                            {/* Facts */}
+                            <div className="p-4 pt-0">
+                                <div className="mt-2 flex flex-col gap-3">
+                                    {el.facts.map((f, fIdx) => (
+                                        <div key={fIdx} className="rounded-xl border border-gray-200 p-3">
+                                            <div className="mb-2 flex items-center justify-between">
+                                                <div className="text-sm font-medium text-gray-700">Fact #{fIdx + 1}</div>
+                                                <button
+                                                    className="rounded-lg bg-rose-50 px-2 py-1 text-xs text-rose-700 hover:bg-rose-100"
+                                                    onClick={() => removeFact(elIdx, fIdx)}
+                                                    type="button"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                            <div className="grid gap-3 sm:grid-cols-3">
+                                                <label className="flex flex-col gap-1 text-sm">
+                                                    <span className="text-gray-600">Fact ID</span>
+                                                    <input
+                                                        className="rounded-xl border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        value={f.id}
+                                                        onChange={(e) => updateFact(elIdx, fIdx, { id: e.target.value })}
+                                                    />
+                                                </label>
+                                                <label className="flex flex-col gap-1 text-sm">
+                                                    <span className="text-gray-600">Fact Name</span>
+                                                    <input
+                                                        className="rounded-xl border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        value={f.name}
+                                                        onChange={(e) => updateFact(elIdx, fIdx, { name: e.target.value })}
+                                                    />
+                                                </label>
+                                                <label className="flex flex-col gap-1 text-sm sm:col-span-1">
+                                                    <span className="text-gray-600">Information</span>
+                                                    <input
+                                                        className="rounded-xl border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        value={f.information}
+                                                        onChange={(e) => updateFact(elIdx, fIdx, { information: e.target.value })}
+                                                    />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Actions */}
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <button
+                        onClick={addElement}
+                        className="rounded-2xl bg-indigo-600 px-4 py-2 text-white shadow hover:bg-indigo-700"
+                        type="button"
+                    >
+                        + Add Knowledge Element
+                    </button>
+                    <button
+                        onClick={copyJson}
+                        className="rounded-2xl bg-gray-900 px-4 py-2 text-white shadow hover:bg-black/90"
+                        type="button"
+                    >
+                        Copy JSON
+                    </button>
+                    <button
+                        onClick={send}
+                        disabled={busy}
+                        className={`rounded-2xl px-4 py-2 text-white shadow ${busy ? "bg-green-400" : "bg-green-600 hover:bg-green-700"}`}
+                        type="button"
+                    >
+                        {busy ? "Sending…" : "Send to Endpoint"}
+                    </button>
+                </div>
+
+                {/* JSON Preview */}
+                <section className="mt-6">
+                    <h2 className="mb-2 text-sm font-semibold text-gray-700">Live JSON Preview</h2>
+                    <pre className="max-h-[380px] overflow-auto rounded-2xl border border-gray-200 bg-white p-4 text-xs leading-relaxed shadow-sm">
+            {JSON.stringify(payload, null, 2)}
+          </pre>
+                </section>
+            </div>
+        </div>
+    );
+}
