@@ -6,8 +6,9 @@ import Contact from './components/pages/Contact.jsx';
 import ProductDetails from './components/pages/ProductDetails.jsx';
 import Login from './components/pages/Login.jsx';
 import Welcome from './components/pages/Welcome.jsx';
-import Knowledge from './components/pages/Knowledge.jsx';
-
+import KnowledgeBase from './components/pages/KnowledgeBase.jsx';
+import KnowledgeOriginal from './components/pages/KnowledgeOriginal.jsx';
+import Fact from "./components/pages/Fact.jsx";
 function App() {
     return (
         <Router>
@@ -17,7 +18,9 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/welcome" element={<Welcome />} />
-                <Route path="/Knowledge" element={<Knowledge />} />
+                <Route path="/KnowledgeBase" element={<KnowledgeBase />} />
+                <Route path="/KnowledgeOriginal" element={<KnowledgeOriginal />} />
+                <Route path="/Fact" element={<Fact />} />
                 {/*<Route path="/products" element={<ProductList />} />*/}
                 {/*<Route path="/products/:id" element={<ProductDetails />} />*/}
                 {/* You can add more routes here */}
