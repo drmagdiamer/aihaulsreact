@@ -8,25 +8,31 @@ export default function Fact({
  onRemove,
  onChange,
  onValidate,
- isDisabled = false,
+ isOnlyFact = false,
  showErrors = false,
 }) {
+    const [touched, setTouched] = React.useState({ name: false, information: false });
 
+    const handleBlur = (field) => {
+        setTouched((prev) => ({ ...prev, [field]: true }));
+    };
     // Validation logic
     const errors = {
         name: !name?.trim() ? "Name is required." : "",
         information: !information?.trim() ? "Information is required." : "",
     };
+
+    // handle errors
     const isValid = !errors.name && !errors.information;
+    const nameError = (touched.name || showErrors) && errors.name;
+    const infoError = (touched.information || showErrors) && errors.information;
+
 
     // Notify parent about validation status
     React.useEffect(() => {
         onValidate?.({ factId, errors, isValid });
     }, [factId, errors.name, errors.information, isValid, onValidate]);
 
-    // Display errors if showErrors is true
-    const nameErr = showErrors ? errors.name : "";
-    const infoErr = showErrors ? errors.information : "";
 
     return (
         <div className="card mb-3 shadow-sm">
@@ -35,9 +41,9 @@ export default function Fact({
                     <h6 className="mb-0">Fact #{index + 1}</h6>
                     <button
                         type="button"
-                        className={`btn btn-sm ${isDisabled ? "btn-outline-secondary" : "btn-outline-danger"}`}
+                        className={`btn btn-sm ${isOnlyFact ? "btn-outline-secondary" : "btn-outline-danger"}`}
                         onClick={onRemove}
-                        disabled={isDisabled}
+                        disabled={isOnlyFact}
                     >
                         Remove
                     </button>
@@ -48,24 +54,27 @@ export default function Fact({
                         <label className="form-label">Name</label>
                         <input
                             type="text"
-                            className={`form-control ${nameErr ? "is-invalid" : ""}`}
+                            name="factName"
+                            className={`form-control ${nameError? "is-invalid" : ""}`}
                             placeholder="Enter fact name..."
                             value={name}
-                            onChange={(e) => onChange?.({ name: e.target.value })}
+                            onInput={(e) => onChange?.({ name: e.currentTarget.value })}
+                            onBlur={() => handleBlur("name")}
                         />
-                        {nameErr && <div className="invalid-feedback">{nameErr}</div>}
+                        { nameError && <div className="invalid-feedback">{errors.name}</div>}
                     </div>
 
                     <div className="col-md-6">
                         <label className="form-label">Information</label>
                         <input
                             type="text"
-                            className={`form-control ${infoErr ? "is-invalid" : ""}`}
+                            className={`form-control ${infoError ? "is-invalid" : ""}`}
                             placeholder="Enter information..."
                             value={information}
-                            onChange={(e) => onChange?.({ information: e.target.value })}
+                            onInput={(e) => onChange?.({ information: e.currentTarget.value })}
+                            onBlur={() => handleBlur("information")}
                         />
-                        {infoErr && <div className="invalid-feedback">{infoErr}</div>}
+                        { infoError && <div className="invalid-feedback">{errors.information}</div>}
                     </div>
                 </div>
             </div>

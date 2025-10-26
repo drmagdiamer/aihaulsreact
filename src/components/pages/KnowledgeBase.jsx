@@ -13,6 +13,7 @@ export default function KnowledgeBase() {
     const [showErrors, setShowErrors] = React.useState(false);
     const [isValid, setIsValid] = React.useState(false);
     const [toast, setToast] = React.useState(null);
+    const [submitTick, setSubmitTick] = React.useState(0);
 
     // Handlers
     const handleValidate = ({ isValid, value }) => {
@@ -30,6 +31,7 @@ export default function KnowledgeBase() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setShowErrors(true);
+        setSubmitTick(t => t + 1);
         if (!isValid) return;
 
         try {
@@ -85,6 +87,7 @@ export default function KnowledgeBase() {
                 <KnowledgeList
                     onValidate={handleValidate}
                     showErrors={showErrors}
+                    submitTick={submitTick}
                 />
 
                 <div className="d-flex justify-content-end gap-2 mt-3">

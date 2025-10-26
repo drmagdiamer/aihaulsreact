@@ -9,10 +9,12 @@ export default function KnowledgeElement({
  onFactsChange,
  onValidate,
  showErrors = false,
+ submitTick
 }) {
     const [facts, setFacts] = React.useState([{ id: 0, name: "", information: "" }]);
     const nextId = React.useRef(1);
     const [factValidity, setFactValidity] = React.useState({});
+    const [maxIdAtSubmit, setMaxIdAtSubmit] = React.useState(null);
 
     // Add a new fact
     const handleAddFact = React.useCallback(() => {
@@ -35,6 +37,7 @@ export default function KnowledgeElement({
 
     // Update a fact
     const handleFactChange = React.useCallback((factId, updatedFields) => {
+        console.log("Updating fact", factId, updatedFields);
         setFacts((prevFacts) =>
             prevFacts.map((fact) =>
                 fact.id === factId ? { ...fact, ...updatedFields } : fact
@@ -56,6 +59,23 @@ export default function KnowledgeElement({
         if (!facts.length) return false;
         return facts.every((f) => factValidity[f.id]?.isValid === true);
     }, [facts, factValidity]);
+
+    // const isElementInvalidForDisplay = React.useMemo(() => {
+    //     if (!showErrors || maxIdAtSubmit == null) return false;
+    //
+    //     const preSubmitFacts = facts.filter(f => f.id <= maxIdAtSubmit);
+    //     if (!preSubmitFacts.length) return false;
+    //
+    //     // true if any pre-submit fact is invalid
+    //     return preSubmitFacts.some(f => !factValidity[f.id]?.isValid);
+    // }, [facts, factValidity, maxIdAtSubmit, showErrors]);
+
+    // check last submitted fact for error display
+    React.useEffect(() => {
+        if (!showErrors) return;
+        setMaxIdAtSubmit(nextId.current - 1);
+    }, [submitTick, showErrors]);
+
 
     // Notify parent about validation status
     React.useEffect(() => {
@@ -98,17 +118,17 @@ export default function KnowledgeElement({
                         onRemove={() => handleRemoveFact(fact.id)}
                         onChange={(patch) => handleFactChange(fact.id, patch)}
                         onValidate={handleFactValidate}
-                        isDisabled={facts.length <= 1}
-                        showErrors={showErrors}
+                        isOnlyFact={facts.length <= 1}
+                        showErrors={showErrors && maxIdAtSubmit != null && fact.id <= maxIdAtSubmit}
                     />
                 ))}
 
-                {/* Display element error if invalid */}
-                {!isElementValid && showErrors && (
-                    <div className="alert alert-warning mb-0">
-                        Please complete all facts in this element.
-                    </div>
-                )}
+                {/*/!* Display element error if invalid *!/*/}
+                {/*{isElementInvalidForDisplay && (*/}
+                {/*    <div className="alert alert-warning mb-0">*/}
+                {/*        Please complete all facts in this element.*/}
+                {/*    </div>*/}
+                {/*)}*/}
 
                 {/* Add new fact */}
                 <div className="text-end mt-3">

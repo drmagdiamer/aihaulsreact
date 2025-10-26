@@ -3,14 +3,15 @@ import KnowledgeElement from "./pages/KnowledgeElement.jsx";
 
 export default function KnowledgeList({
 onValidate,
-showErrors = false
+showErrors = false,
+submitTick
 }) {
 
     const [elements, setElements] = React.useState([{ id: 1, name: "" }]);
     const nextId = React.useRef(2);
     const [elementFacts, setElementFacts] = React.useState([]);
     const [elementValidity, setElementValidity] = React.useState({});
-
+    const [maxElementIdAtSubmit, setMaxElementIdAtSubmit] = React.useState(null);
 
     // Adding and removing knowledge elements
     const addKnowledgeElement = () => {
@@ -75,6 +76,14 @@ showErrors = false
         onValidate?.({ isValid: allValid, value: payload });
     }, [allValid, payload, onValidate]);
 
+    // Track max element ID at submit to control error display
+    React.useEffect(() => {
+        if (!showErrors) return;
+        const maxId = elements.length ? Math.max(...elements.map(e => Number(e.id))) : -1;
+        setMaxElementIdAtSubmit(maxId);
+    }, [showErrors, submitTick]);
+
+
     return (
         <div className="container my-4">
             {elements.map((element, index) => (
@@ -86,7 +95,12 @@ showErrors = false
                     isDisabled={elements.length <= 1}
                     onFactsChange={handleFactsChange}
                     onValidate={handleElementValidate}
-                    showErrors={showErrors}
+                    showErrors={
+                        showErrors &&
+                        maxElementIdAtSubmit != null &&
+                        Number(element.id) <= maxElementIdAtSubmit
+                    }
+                    submitTick={submitTick}
                 />
             ))}
 
