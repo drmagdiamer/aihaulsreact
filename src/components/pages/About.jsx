@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
+import { getMessage } from "../../locales/messages";
 
 function About() {
     return (
@@ -9,13 +10,12 @@ function About() {
             <Header />
             <section id="About">
                 <div className="container">
-                    <h2>About Us</h2>
+                    <h2>{getMessage('about.title')}</h2>
                     <p>
-                        Java Innovations is a startup focused on building AI applications using Open AI and Gemini on the cloud.
-                        Our mission is to create innovative solutions that leverage artificial intelligence to enhance user experiences and solve complex problems.
+                        {getMessage('about.description1')}
                     </p>
-                    <h3>Our Team</h3>
-                    <p>Our team consists of experienced professionals passionate about AI and technology.</p>
+                    <h3>{getMessage('about.teamTitle')}</h3>
+                    <p>{getMessage('about.teamDescription')}</p>
                 </div>
             </section>
             <Footer />

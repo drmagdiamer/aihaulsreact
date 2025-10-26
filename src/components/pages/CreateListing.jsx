@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
+import { getMessage } from '../../locales/messages';
 
 const BASE_URL = "http://localhost:8777";
 
 const OPTIONS = [
-    { label: 'Global', value: 'global' },
-    { label: 'Preferred Provider', value: 'preferredProvider' },
+    { value: 'global' },
+    { value: 'preferredProvider' },
 ];
 
 
@@ -44,7 +45,7 @@ function CreateListing() {
 
     const fetchCompanies = async () => {
         if (!textValue || !selectedType) {
-            alert("Please select a type and enter a company name");
+            alert(getMessage('createListing.alertSelectTypeAndName'));
             return;
         }
 
@@ -70,9 +71,10 @@ function CreateListing() {
             <Header />
             <form id="create-listing-form" onSubmit={handleSubmit} className= "mx-3">
                 <fieldset className="mb-3 mx-3">
-                    <legend className="fs-6 my-1 fw-bold">Please make a selection</legend>
+                    <legend className="fs-6 my-1 fw-bold">{getMessage('createListing.pleaseMakeSelection')}</legend>
 
                     {OPTIONS.map((op) => {
+                        const label = op.value === 'global' ? getMessage('createListing.optionGlobal') : getMessage('createListing.optionPreferredProvider');
                         return (
                             <div className="form-check " key={op.value}>
                                 <input
@@ -85,7 +87,7 @@ function CreateListing() {
                                     onChange={handleTypeChange}
                                 />
                                 <label className="form-check-label" htmlFor={op.value}>
-                                    {op.label}
+                                    {label}
                                 </label>
                             </div>
                         );
@@ -94,29 +96,29 @@ function CreateListing() {
 
                 <div>
                     <label>
-                        Enter some text:
+                        {getMessage('createListing.enterSomeText')}
                     </label>
                     <textarea
                         className="form-control"
                         rows="4"
                         value={textValue}
                         onChange={handleTextChange}
-                        placeholder="Type something here..."
+                        placeholder={getMessage('createListing.placeholderText')}
                     />
                 </div>
 
                 <div className="mt-3">
                     <button type="submit" className="btn btn-primary" >
-                        Submit
+                        {getMessage('createListing.submit')}
                     </button>
                 </div>
             </form>
             <br/>
 
-            {loading ? ( <p>Loading companies...</p> )  :   // Show loading state
+            {loading ? ( <p>{getMessage('createListing.loadingCompanies')}</p> )  :   // Show loading state
             companies.length > 0 && (   // Load companies only if data is available
             <div className="container mt-4n mx-2">
-                <h5>Select Companies</h5>
+                <h5>{getMessage('createListing.selectCompanies')}</h5>
                 <div className="row">
                     { companies.map((company) => (
                         <div key={company.id} className="col-md-4 mb-3">

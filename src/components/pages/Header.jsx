@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getMessage } from '../../locales/messages';
 
 const Header = () => {
     return (
@@ -10,7 +11,7 @@ const Header = () => {
             <div className="container-fluid">
                 {/* Left: Home link */}
                 <Link className="navbar-brand" to="/" style={{ color: '#fff' }}>
-                    Home
+                    {getMessage('header.home')}
                 </Link>
 
                 {/* Right: Hamburger button */}
@@ -21,7 +22,7 @@ const Header = () => {
                     data-bs-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent"
                     aria-expanded="false"
-                    aria-label="Toggle navigation"
+                    aria-label={getMessage('header.toggleNavigation')}
                 >
           <span
               className="navbar-toggler-icon"
@@ -34,22 +35,22 @@ const Header = () => {
                     <ul className="navbar-nav ms-auto mb-2 mb-md-0">
                         <li className="nav-item">
                             <Link className="nav-link" to="/about" style={{ color: '#fff' }}>
-                                About Us
+                                {getMessage('header.about')}
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/CreateListing" style={{ color: '#fff' }}>
-                                CreateListing
+                                {getMessage('header.createListing')}
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/contact" style={{ color: '#fff' }}>
-                                Contact
+                                {getMessage('header.contact')}
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/login" style={{ color: '#fff' }}>
-                                Login
+                                {getMessage('header.login')}
                             </Link>
                         </li>
                     </ul>
@@ -58,7 +59,7 @@ const Header = () => {
                 {/* Center: Slogan */}
                 <div className="position-absolute start-50 translate-middle-x">
           <span className="h5 mb-0" style={{ color: '#fff' }}>
-            Building better future with AI
+            {getMessage('header.slogan')}
           </span>
                 </div>
             </div>

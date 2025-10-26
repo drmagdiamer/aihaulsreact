@@ -1,12 +1,13 @@
 // Breed.jsx
 import React from "react";
+import { getMessage } from "../../locales/messages";
 
 function validateBreed(type, children) {
     if (!type?.trim()) {
-        throw new Error("Each Breed must have a non-empty 'type'.");
+        throw new Error(getMessage('breed.errorNoType'));
     }
     if (!children) {
-        throw new Error("Each Breed must have a description (children).");
+        throw new Error(getMessage('breed.errorNoDescription'));
     }
 }
 

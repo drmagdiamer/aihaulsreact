@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
+import { getMessage } from '../../locales/messages';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -23,7 +24,7 @@ const Login = () => {
 
             if (!response.ok) {
                 // If response status is not OK, throw an error to be caught below.
-                throw new Error('Login failed');
+                throw new Error(getMessage('login.errorLoginFailed'));
             }
 
             const data = await response.json();
@@ -36,11 +37,11 @@ const Login = () => {
                 // Navigate to the welcome screen
                 navigate('/welcome');
             } else {
-                throw new Error('Token not found');
+                throw new Error(getMessage('login.errorTokenNotFound'));
             }
         } catch (err) {
             console.error(err);
-            setError('error in user/password. Please try again');
+            setError(getMessage('login.errorInvalidCredentials'));
         }
     };
 
@@ -48,11 +49,11 @@ const Login = () => {
         <>
             <Header />
             <div className="container mt-4">
-                <h2>Login</h2>
+                <h2>{getMessage('login.title')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label htmlFor="username" className="form-label">
-                            Username ::
+                            {getMessage('login.username')}
                         </label>
                         <input
                             type="text"
@@ -64,7 +65,7 @@ const Login = () => {
                     </div>
                     <div className="mb-3">
                         <label htmlFor="password" className="form-label">
-                            Password
+                            {getMessage('login.password')}
                         </label>
                         <input
                             type="password"
@@ -76,7 +77,7 @@ const Login = () => {
                     </div>
                     {error && <div className="text-danger mb-3">{error}</div>}
                     <button type="submit" className="btn btn-primary">
-                        Login
+                        {getMessage('login.submit')}
                     </button>
                 </form>
             </div>
