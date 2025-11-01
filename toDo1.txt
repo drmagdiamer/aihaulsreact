@@ -1,0 +1,229 @@
+Yes — it's doable. Approach: create a small JIElement class that exposes validate() and getErrors(),
+a useJIElement hook that wraps it for functional components, and a lightweight registry (via React Context) in the parent.
+Children register their JIElement instance with the parent; the parent calls every registered validate() recursively before submit.
+Brief summary of files below, then code:
+src/utils/JIElement.js — class with getErrors() and validate().
+src/hooks/useJIElement.js — hook to use JIElement inside functional components; optionally auto-registers with parent registry.
+src/context/JIRegistryContext.js — context exposing register.
+src/components/ParentForm.jsx — holds registry, validateAll() calls every registered validate().
+src/components/Fact.jsx — uses useJIElement and registers itself when inside ParentForm.
+
+// javascript
+// file: `src/utils/JIElement.js`
+export class JIElement {
+  // getValues: () => current values object
+  // validators: { fieldName: (value, allValues) => '' | errorMessage }
+  constructor(getValues, validators = {}) {
+    this.getValues = getValues;
+    this.validators = validators;
+  }
+
+  getErrors() {
+    const values = (this.getValues && this.getValues()) || {};
+    const errors = {};
+    for (const key of Object.keys(this.validators)) {
+      const validator = this.validators[key];
+      const result = typeof validator === 'function' ? validator(values[key], values) : '';
+      errors[key] = result || '';
+    }
+    return errors;
+  }
+
+  validate() {
+    const errors = this.getErrors();
+    return Object.values(errors).every((e) => !e);
+  }
+}
+
+// file: `src/hooks/useJIElement.js`
+import React from 'react';
+import { JIElement } from '../utils/JIElement';
+
+export function useJIElement(getValues, validators = {}, registryRegister) {
+  const ref = React.useRef();
+
+  if (!ref.current) {
+    ref.current = new JIElement(getValues, validators);
+  }
+
+  // keep instance up to date
+  React.useEffect(() => {
+    ref.current.getValues = getValues;
+    ref.current.validators = validators;
+  }, [getValues, validators]);
+
+  // optionally register with parent registry; expects register(elem) => unregister()
+  React.useEffect(() => {
+    if (typeof registryRegister === 'function') {
+      const unregister = registryRegister(ref.current);
+      return () => {
+        if (typeof unregister === 'function') unregister();
+      };
+    }
+    return undefined;
+  }, [registryRegister]);
+
+  const getErrors = React.useCallback(() => ref.current.getErrors(), []);
+  const validate = React.useCallback(() => ref.current.validate(), []);
+
+  return { instance: ref.current, getErrors, validate };
+}
+
+// file: `src/context/JIRegistryContext.js`
+import React from 'react';
+// context gives children a `register(element)` function
+export const JIRegistryContext = React.createContext({
+  register: () => () => {}, // default no-op register => returns unregister
+});
+
+// file: `src/components/ParentForm.jsx`
+import React from 'react';
+import { JIRegistryContext } from '../context/JIRegistryContext';
+import Fact from './Fact'; // example child
+
+export default function ParentForm() {
+  // store registered elements in a Map
+  const registryRef = React.useRef(new Map());
+
+  const register = React.useCallback((element) => {
+    const id = Symbol('ji-element');
+    registryRef.current.set(id, element);
+    // return unregister function
+    return () => registryRef.current.delete(id);
+  }, []);
+
+  // validate all registered elements; return { valid, errors }
+  const validateAll = React.useCallback(() => {
+    let allValid = true;
+    const errors = {};
+    for (const [id, elem] of registryRef.current.entries()) {
+      const isValid = elem.validate();
+      const e = elem.getErrors();
+      if (!isValid) allValid = false;
+      // use symbol description as key fallback
+      errors[id.toString()] = e;
+    }
+    return { valid: allValid, errors };
+  }, []);
+
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
+    const { valid, errors } = validateAll();
+    if (!valid) {
+      console.log('Not valid', errors);
+      return;
+    }
+    // proceed with submit
+    console.log('All valid — submit');
+  };
+
+  return (
+    <JIRegistryContext.Provider value={{ register }}>
+      <form onSubmit={handleSubmit}>
+        {/* example usage — each Fact will auto-register */}
+        <Fact factId="a" index={0} name="" information="" />
+        <Fact factId="b" index={1} name="" information="" />
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
+    </JIRegistryContext.Provider>
+  );
+}
+
+// file: `src/components/Fact.jsx`
+import React from 'react';
+import { useContext } from 'react';
+import { JIRegistryContext } from '../context/JIRegistryContext';
+import { useJIElement } from '../hooks/useJIElement';
+
+export default function Fact({
+  factId,
+  index = 0,
+  name = '',
+  information = '',
+  onRemove,
+  onChange,
+  onValidate,
+  isOnlyFact = false,
+  showErrors = false,
+}) {
+  const { register } = useContext(JIRegistryContext);
+
+  const validators = React.useMemo(
+    () => ({
+      name: (v) => (!v?.trim() ? 'Name is required.' : ''),
+      information: (v) => (!v?.trim() ? 'Information is required.' : ''),
+    }),
+    []
+  );
+
+  const getValues = React.useCallback(() => ({ name, information }), [name, information]);
+
+  // pass `register` so the hook auto-registers this element with the parent
+  const { getErrors, validate } = useJIElement(getValues, validators, register);
+
+  const [touched, setTouched] = React.useState({ name: false, information: false });
+
+  const errors = getErrors();
+  const isValid = validate();
+  const nameError = (touched.name || showErrors) && errors.name;
+  const infoError = (touched.information || showErrors) && errors.information;
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  React.useEffect(() => {
+    onValidate?.({ factId, errors, isValid });
+  }, [factId, errors.name, errors.information, isValid, onValidate]);
+
+  return (
+    <div className="card mb-3 shadow-sm">
+      <div className="card-body">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h6 className="mb-0">Fact #{index + 1}</h6>
+          <button
+            type="button"
+            className={`btn btn-sm ${isOnlyFact ? 'btn-outline-secondary' : 'btn-outline-danger'}`}
+            onClick={onRemove}
+            disabled={isOnlyFact}
+          >
+            Remove
+          </button>
+        </div>
+
+        <div className="row g-3">
+          <div className="col-md-6">
+            <label className="form-label">Name</label>
+            <input
+              type="text"
+              name="factName"
+              className={`form-control ${nameError ? 'is-invalid' : ''}`}
+              placeholder="Enter fact name..."
+              value={name}
+              onInput={(e) => onChange?.({ name: e.currentTarget.value })}
+              onBlur={() => handleBlur('name')}
+            />
+            {nameError && <div className="invalid-feedback">{errors.name}</div>}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Information</label>
+            <input
+              type="text"
+              className={`form-control ${infoError ? 'is-invalid' : ''}`}
+              placeholder="Enter information..."
+              value={information}
+              onInput={(e) => onChange?.({ information: e.currentTarget.value })}
+              onBlur={() => handleBlur('information')}
+            />
+            {infoError && <div className="invalid-feedback">{errors.information}</div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+Explanation: children create a JIElement instance via useJIElement and (if inside ParentForm) register
+it with the parent's registry using register(element). The parent keeps a map of registered elements and calls each .validate() before submission. This combines OO-style reusable validation with functional React components and lets the parent validate recursively.

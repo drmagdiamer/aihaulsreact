@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ab55fc3e-c2c5-4073-97bd-70c21142f163" name="Changes" comment="Adding Knowledge page">
-      <change afterPath="$PROJECT_DIR$/src/components/pages/KnowledgeOriginal.jsx" afterDir="false" />
+    <list default="true" id="ab55fc3e-c2c5-4073-97bd-70c21142f163" name="Changes" comment="Adding multi-language support">
+      <change afterPath="$PROJECT_DIR$/toDo1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/KnowledgeList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/components/KnowledgeList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/pages/Fact.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/components/Fact.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/pages/KnowledgeElement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/components/KnowledgeElement.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/pages/KnowledgeOriginal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/pages/legacy/KnowledgeOriginal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/pages/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/components/ProductList.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,10 +22,16 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JSX File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="TestingClaude" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -43,27 +54,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.npm dev.executor&quot;: &quot;Run&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\magdi\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "knowledge-base",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "npm.npm dev.executor": "Run",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\amer\myCode\___research2025\ai_hauls_react\src\components\components" />
+      <recent name="C:\amer\myCode\___research2025\ai_hauls_react\src\components\pages\legacy" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -79,60 +95,34 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1760202650361</updated>
-      <workItem from="1760202651578" duration="849000" />
-      <workItem from="1760209114329" duration="638000" />
-      <workItem from="1760305934112" duration="852000" />
-      <workItem from="1760395703642" duration="317000" />
-      <workItem from="1760741403109" duration="623000" />
-      <workItem from="1760802998782" duration="11000" />
-      <workItem from="1760803139460" duration="3467000" />
-      <workItem from="1760891416077" duration="2910000" />
+      <workItem from="1760202651578" duration="801000" />
+      <workItem from="1761495418332" duration="3661000" />
     </task>
-    <task id="LOCAL-00001" summary="First">
+    <task id="LOCAL-00001" summary="Adding original code">
       <option name="closed" value="true" />
-      <created>1760203463973</created>
+      <created>1761495449595</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1760203463973</updated>
+      <updated>1761495449595</updated>
     </task>
-    <task id="LOCAL-00002" summary="Adding Knowledge page">
+    <task id="LOCAL-00002" summary="Adding multi-language support">
       <option name="closed" value="true" />
-      <created>1760805714416</created>
+      <created>1761496506263</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1760805714416</updated>
+      <updated>1761496506263</updated>
     </task>
-    <task id="LOCAL-00003" summary="Adding Knowledge page">
-      <option name="closed" value="true" />
-      <created>1760805820198</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1760805820198</updated>
-    </task>
-    <option name="localTasksCounter" value="4" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="First" />
-    <MESSAGE value="Adding Knowledge page" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding Knowledge page" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/components/pages/KnowledgeOriginal.jsx</url>
-          <line>207</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Adding original code" />
+    <MESSAGE value="Adding multi-language support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding multi-language support" />
   </component>
 </project>
