@@ -21,8 +21,8 @@ function App() {
     return (
         <AuthProvider>
             <ValidationProvider>
-                <UserProvider>
                 <CompanyProvider>
+                <UserProvider>
             <Router>
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -42,8 +42,8 @@ function App() {
                     {/* You can add more routes here */}
                 </Routes>
             </Router>
-                </CompanyProvider>
                 </UserProvider>
+                </CompanyProvider>
             </ValidationProvider>
         </AuthProvider>
     );

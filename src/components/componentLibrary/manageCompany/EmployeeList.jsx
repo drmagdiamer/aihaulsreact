@@ -1,7 +1,8 @@
 import { useCompany } from "../../../context/CompanyContext.jsx";
 
-export default function EmployeeList() {
-    const { employees, selectedCompany, updateEmployee, companyLookups } = useCompany();
+export default function EmployeeList({ selectedCompany: propSelectedCompany }) {
+    const { employees, selectedCompany: contextSelectedCompany, updateEmployee, companyLookups } = useCompany();
+    const selectedCompany = propSelectedCompany || contextSelectedCompany;
 
     const list = selectedCompany
         ? employees.filter(e => e.companyId === selectedCompany.id)

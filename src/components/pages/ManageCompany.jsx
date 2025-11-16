@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import SearchBar from "../componentLibrary/manageCompany/SearchBar";
-import SidebarActions from "../componentLibrary/manageCompany/SideBarActions";
+import ManageCompanySidebarActions from "../componentLibrary/manageCompany/ManageCompanySidebarActions.jsx";
 import CompanyDetails from "../componentLibrary/manageCompany/CompanyDetails";
 import AddEmployeeForm from "../componentLibrary/manageCompany/AddEmployeeForm";
 import Header from "./Header.jsx";
@@ -98,26 +98,27 @@ export default function ManageCompanyPage() {
 
                 {/* Sidebar */}
                 <div className="col-3">
-                    <SidebarActions setCurrentAction={setCurrentAction} currentAction={currentAction} />
+                    <ManageCompanySidebarActions setCurrentAction={setCurrentAction} currentAction={currentAction} />
                 </div>
 
-                {/* Right section — dynamic panels */}
-                <div className="col-9">
-                    <div className="card p-4 shadow-sm">
-                        {currentAction === "manage-employees" && <EmployeeList />}
-                        {currentAction === "add-employee" && <AddEmployeeForm />}
-                        {!currentAction && selectedCompany && (
-                            <div className="text-center text-muted py-5">
-                                <p>Select an action from the sidebar to get started.</p>
-                            </div>
-                        )}
-                        {!currentAction && !selectedCompany && (
-                            <div className="text-center text-muted py-5">
-                                <p>Select a company to view options.</p>
-                            </div>
-                        )}
+                    {/* Right section — dynamic panels */}
+                    <div className="col-9">
+                        <div className="card p-4 shadow-sm">
+                            {currentAction === "edit-company" && <CompanyDetails />}
+                            {currentAction === "manage-employees" && <EmployeeList />}
+                            {currentAction === "add-employee" && <AddEmployeeForm />}
+                            {!currentAction && selectedCompany && (
+                                <div className="text-center text-muted py-5">
+                                    <p>Select an action from the sidebar to get started.</p>
+                                </div>
+                            )}
+                            {!currentAction && !selectedCompany && (
+                                <div className="text-center text-muted py-5">
+                                    <p>Select a company to view options.</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
             <Footer/>

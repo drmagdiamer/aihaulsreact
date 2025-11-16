@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useCompany } from "../../../context/CompanyContext.jsx";
 
-export default function AddEmployeeForm() {
-    const { addEmployee, selectedCompany, companyLookups } = useCompany();
+export default function AddEmployeeForm({ selectedCompany: propSelectedCompany }) {
+    const { addEmployee, selectedCompany: contextSelectedCompany, companyLookups } = useCompany();
+    const selectedCompany = propSelectedCompany || contextSelectedCompany;
 
     const [formData, setFormData] = useState({
         name: "",

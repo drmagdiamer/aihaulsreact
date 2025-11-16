@@ -23,9 +23,9 @@ export const AuthProvider = ({ children }) => {
         // TODO: Call API GET /admin/user/profile to get current user data
         const mockUser = {
             id: 1,
-            name: "John Admin",
-            email: "admin@company.com",
-            role: "Admin",
+            name: "John Agent",
+            email: "agent@company.com",
+            role: "Agent",
             companyId: 1,
             companyName: "FedEx Canada"
         };
@@ -43,6 +43,18 @@ export const AuthProvider = ({ children }) => {
             setIsLoggedIn(true);
             // TODO: Fetch user profile from DB on mount
             fetchUserProfile();
+        } else {
+            // For testing/bypassing login: Set mock user if no token
+            const mockUser = {
+                id: 1,
+                name: "John Agent",
+                email: "agent@company.com",
+                role: "Agent",
+                companyId: 1,
+                companyName: "FedEx Canada"
+            };
+            setCurrentUser(mockUser);
+            setUserRole(mockUser.role);
         }
     }, []);
 

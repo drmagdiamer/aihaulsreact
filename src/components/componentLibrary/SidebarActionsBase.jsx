@@ -1,17 +1,12 @@
-import { useCompany } from "../../../context/CompanyContext.jsx";
+import { useCompany } from "../../context/CompanyContext.jsx";
 
-export default function SidebarActions({ setCurrentAction, currentAction }) {
+export default function SidebarActionsBase({ setCurrentAction, currentAction, actions, isDisabled: externalDisabled }) {
     const { selectedCompany } = useCompany();
-    const isDisabled = !selectedCompany;
-
-    const actionButtons = [
-        { action: "manage-employees", label: "Manage Employees" },
-        { action: "add-employee", label: "Add Employee" }
-    ];
+    const isDisabled = externalDisabled !== undefined ? externalDisabled : !selectedCompany;
 
     return (
         <div className="card p-3 d-flex flex-column gap-2">
-            {actionButtons.map(({ action, label }) => (
+            {actions.map(({ action, label }) => (
                 <button 
                     key={action}
                     className={`btn ${currentAction === action ? "btn-primary" : "btn-outline-primary"}`}
@@ -25,3 +20,4 @@ export default function SidebarActions({ setCurrentAction, currentAction }) {
         </div>
     );
 }
+
