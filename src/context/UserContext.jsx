@@ -1,15 +1,15 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useCompany } from "./CompanyContext.jsx";
 import { useAuth } from "../contexts/AuthContext.jsx";
 
 export const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
     const [userCompany, setUserCompany] = useState(null);
-    const { setSelectedCompany, setCompanyDetails } = useCompany();
     const { currentUser } = useAuth();
 
     // Set company from AuthContext currentUser, or default if no user
+    // Only sets userCompany in UserContext, not selectedCompany in CompanyContext
+    // This allows ManageCompany to have its own company selection without interference
     useEffect(() => {
         if (currentUser?.companyId) {
             // Get company from authenticated user
@@ -21,8 +21,6 @@ export function UserProvider({ children }) {
                 type: "company"
             };
             setUserCompany(company);
-            setSelectedCompany(company);
-            setCompanyDetails(company);
         } else if (!currentUser && !userCompany) {
             // Default company when no user is logged in (for testing/bypassing login)
             const defaultCompany = {
@@ -33,10 +31,8 @@ export function UserProvider({ children }) {
                 type: "company"
             };
             setUserCompany(defaultCompany);
-            setSelectedCompany(defaultCompany);
-            setCompanyDetails(defaultCompany);
         }
-    }, [currentUser, userCompany, setSelectedCompany, setCompanyDetails]);
+    }, [currentUser, userCompany]);
 
     return (
         <UserContext.Provider

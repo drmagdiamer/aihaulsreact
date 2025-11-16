@@ -14,7 +14,8 @@ export function CompanyProvider({ children }) {
         employeeRoles: ['Admin', 'Agent', 'Support'],
         employeeStatuses: ['active', 'suspended', 'under_investigation', 'terminated'],
         searchFilters: [
-            { value: 'company', label: 'Company' }
+            { value: 'company', label: 'Company' },
+            { value: 'provider', label: 'Provider' }
         ]
     });
 

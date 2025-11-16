@@ -14,6 +14,7 @@ import {ValidationProvider} from "./context/ValidationProvider.jsx";
 import CreateCompany from "./components/pages/CreateCompany.jsx";
 import ManageCompany from "./components/pages/ManageCompany.jsx";
 import AdminSector from "./components/pages/AdminSector.jsx";
+import ManageCustomList from "./components/pages/ManageCustomList.jsx";
 import { CompanyProvider} from "./context/CompanyContext.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
 
@@ -34,6 +35,7 @@ function App() {
                     <Route path="/KnowledgeBase" element={<KnowledgeBase />} />
                     <Route path="/ManageCompany" element={<ManageCompany />} />
                     <Route path="/AdminSector" element={<AdminSector />} />
+                    <Route path="/ManageCustomList" element={<ManageCustomList />} />
 
                     {/*<Route path="/KnowledgeOriginal" element={<KnowledgeOriginal />} />*/}
                     {/*<Route path="/Fact" element={<Fact />} />*/}
