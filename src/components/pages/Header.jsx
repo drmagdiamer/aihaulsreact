@@ -1,7 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.jsx';
+import { TEST } from '../../config.js';
 
 const Header = () => {
+    const { isLoggedIn, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
         <nav
             className="navbar navbar-expand-md position-relative"
@@ -47,10 +57,61 @@ const Header = () => {
                                 Contact
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/login" style={{ color: '#fff' }}>
-                                Login
-                            </Link>
+                        <li className="nav-item dropdown">
+                            <a
+                                className="nav-link dropdown-toggle"
+                                href="#"
+                                id="adminDropdown"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                style={{ color: '#fff' }}
+                            >
+                                Admin
+                            </a>
+                            <ul className="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li>
+                                    <Link
+                                        className={`dropdown-item ${isLoggedIn ? 'disabled' : ''}`}
+                                        to="/login"
+                                        style={{
+                                            opacity: isLoggedIn ? 0.5 : 1,
+                                            pointerEvents: isLoggedIn ? 'none' : 'auto'
+                                        }}
+                                    >
+                                        Login
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className={`dropdown-item ${(!isLoggedIn && !TEST) ? 'disabled' : ''}`}
+                                        to="/create-company"
+                                        style={{
+                                            opacity: (!isLoggedIn && !TEST) ? 0.5 : 1,
+                                            pointerEvents: (!isLoggedIn && !TEST) ? 'none' : 'auto'
+                                        }}
+                                    >
+                                        Create Company
+                                    </Link>
+                                </li>
+                                <li>
+                                    <a
+                                        className={`dropdown-item ${!isLoggedIn ? 'disabled' : ''}`}
+                                        href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (isLoggedIn) handleLogout();
+                                        }}
+                                        style={{
+                                            opacity: !isLoggedIn ? 0.5 : 1,
+                                            pointerEvents: !isLoggedIn ? 'none' : 'auto',
+                                            cursor: !isLoggedIn ? 'default' : 'pointer'
+                                        }}
+                                    >
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

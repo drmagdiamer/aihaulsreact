@@ -1,6 +1,7 @@
 // src/components/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 
@@ -9,6 +10,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,8 +33,8 @@ const Login = () => {
             const token = data.token;
 
             if (token) {
-                // Store the token for future API calls (you can also use context or Redux)
-                localStorage.setItem('jwtToken', token);
+                // Use the login function from AuthContext to update state
+                login(token);
                 // Navigate to the welcome screen
                 navigate('/welcome');
             } else {
