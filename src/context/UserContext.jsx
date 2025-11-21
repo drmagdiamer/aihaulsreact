@@ -21,7 +21,7 @@ export function UserProvider({ children }) {
                 type: "company"
             };
             setUserCompany(company);
-        } else if (!currentUser && !userCompany) {
+        } else if (!currentUser) {
             // Default company when no user is logged in (for testing/bypassing login)
             const defaultCompany = {
                 id: 1,
@@ -32,7 +32,7 @@ export function UserProvider({ children }) {
             };
             setUserCompany(defaultCompany);
         }
-    }, [currentUser, userCompany]);
+    }, [currentUser]);
 
     return (
         <UserContext.Provider

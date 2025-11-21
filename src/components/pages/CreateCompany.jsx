@@ -17,6 +17,8 @@ const CreateCompany = () => {
     const [trustLevelError, setTrustLevelError] = useState('');
     const [creditError, setCreditError] = useState('');
 
+    // General form error
+    const [formError, setFormError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
@@ -86,35 +88,11 @@ const CreateCompany = () => {
         return '';
     };
 
-    // onBlur handlers (text fields clear error on blur)
-    const handleNameBlur = () => {
-        const error = validateName(name);
-        setNameError(error);
-    };
-
-    const handleStatusBlur = () => {
-        const error = validateStatus(statusId);
-        setStatusError(error);
-    };
-
-    const handleCompanyTypeBlur = () => {
-        const error = validateCompanyType(companyTypeId);
-        setCompanyTypeError(error);
-    };
-
-    const handleTrustLevelBlur = () => {
-        const error = validateTrustLevel(trustLevelId);
-        setTrustLevelError(error);
-    };
-
-    const handleCreditBlur = () => {
-        const error = validateCredit(availableCredit);
-        setCreditError(error);
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSuccess('');
+        setFormError('');
 
         // Validate all fields
         const nameErr = validateName(name);
@@ -139,7 +117,7 @@ const CreateCompany = () => {
             const token = localStorage.getItem('jwtToken');
 
             if (!token) {
-                setNameError('You must be logged in to create a company');
+                setFormError('You must be logged in to create a company');
                 navigate('/login');
                 return;
             }
@@ -161,10 +139,10 @@ const CreateCompany = () => {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    setNameError('Unauthorized. Please login again.');
+                    setFormError('Unauthorized. Please login again.');
                     return;
                 }
-                setNameError('Failed to create company');
+                setFormError('Failed to create company');
                 return;
             }
 
@@ -182,6 +160,7 @@ const CreateCompany = () => {
             setCompanyTypeError('');
             setTrustLevelError('');
             setCreditError('');
+            setFormError('');
 
             // Optional: Navigate after a delay
             setTimeout(() => {
@@ -190,7 +169,7 @@ const CreateCompany = () => {
 
         } catch (err) {
             console.error(err);
-            setNameError(err.message || 'Error creating company. Please try again.');
+            setFormError(err.message || 'Error creating company. Please try again.');
         }
     };
 
@@ -199,7 +178,9 @@ const CreateCompany = () => {
             <Header />
             <div className="container mt-4">
                 <h2>Create Company</h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
+                    {formError && <div className="alert alert-danger fw-bold" role="alert">{formError}</div>}
+
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label">
                             Company Name <span className="text-danger">*</span>
@@ -215,7 +196,6 @@ const CreateCompany = () => {
                                     setNameError('');
                                 }
                             }}
-                            onBlur={handleNameBlur}
                             maxLength="100"
                             required
                         />
@@ -237,7 +217,6 @@ const CreateCompany = () => {
                                     setStatusError('');
                                 }
                             }}
-                            onBlur={handleStatusBlur}
                             required
                         >
                             <option value="0">Please select</option>
@@ -265,7 +244,6 @@ const CreateCompany = () => {
                                     setCompanyTypeError('');
                                 }
                             }}
-                            onBlur={handleCompanyTypeBlur}
                             required
                         >
                             <option value="0">Please select</option>
@@ -293,7 +271,6 @@ const CreateCompany = () => {
                                     setTrustLevelError('');
                                 }
                             }}
-                            onBlur={handleTrustLevelBlur}
                             required
                         >
                             <option value="0">Please select</option>
@@ -321,7 +298,6 @@ const CreateCompany = () => {
                                     setCreditError('');
                                 }
                             }}
-                            onBlur={handleCreditBlur}
                             step="0.01"
                             min="0"
                             required
